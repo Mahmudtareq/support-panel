@@ -12,9 +12,10 @@ export const routes = {
         create: "/admin/dashboard/banner/create",
         edit: (id: string) => `/admin/dashboard/banner/edit/${id}`,
       },
-      services: "/admin/dashboard/services",
-
-      chef: "/admin/dashboard/chef",
+      analytics: "/admin/dashboard/analytics",
+      contacts: "/admin/dashboard/contacts",
+      users: "/admin/dashboard/users",
+      logs: "/admin/dashboard/logs",
       settings: `/admin/dashboard/settings`,
     },
     user: {

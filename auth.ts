@@ -28,8 +28,6 @@ const buildAuthorize =
 
       const json = await res.json();
 
-      console.log("API Response:", json);
-
       if (!res.ok || json?.status !== "success" || !json?.data) {
         throw new Error(
           json?.message ?? json?.error ?? "Invalid email or password",

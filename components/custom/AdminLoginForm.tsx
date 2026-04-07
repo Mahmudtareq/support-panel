@@ -1,15 +1,15 @@
 "use client";
 
+import { routes } from "@/config/routes";
+import { Eye, EyeOff, Shield } from "lucide-react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Eye, EyeOff, Shield } from "lucide-react";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
 import { Alert, AlertDescription } from "../ui/alert";
-import { routes } from "@/config/routes";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import { ToastMessage } from "./ToastMessage";
 // import { ROLE_REDIRECTS, Role } from "@/config/roleConfig";
 
@@ -39,7 +39,7 @@ export function AdminLoginForm() {
         const message =
           res.error === "CredentialsSignin"
             ? "Invalid email or password" // fallback if message not thrown
-            : res.error; //  real API error e.g. "Account is suspended"
+            : "Invalid email or password";
 
         setError(message);
         ToastMessage.error({ title: message }, { id: loadingId });
@@ -51,8 +51,7 @@ export function AdminLoginForm() {
         { id: loadingId },
       );
 
-      const sessionRes = await fetch("/api/auth/session");
-      const session = await sessionRes.json();
+      // const sessionRes = await fetch("/api/auth/session");
 
       router.push(routes.privateRoutes.admin.dashboard);
     } catch {
@@ -125,6 +124,12 @@ export function AdminLoginForm() {
               </Button>
             </div>
           </div>
+          {/* Error */}
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
           {/* Submit */}
           <Button

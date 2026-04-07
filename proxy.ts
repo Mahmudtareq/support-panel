@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
+import { auth } from "./auth";
 import { routes } from "./config/routes";
 import { extractRoutes } from "./lib/utils";
-import { auth } from "./auth";
 
 //  Helpers
 function isAdminRoute(pathname: string): boolean {
@@ -22,7 +22,6 @@ export default auth((req) => {
   const user = session?.user;
   const role = user?.role;
   const token = user?.accessToken as string | undefined;
-  console.log("MIDDLEWARE TOKEN:", token);
 
   const isLoggedIn = !!user && !!token;
 

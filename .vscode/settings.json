@@ -1,0 +1,39 @@
+{
+  "workbench.colorTheme": "Dark+",
+  "workbench.colorCustomizations": {
+    "[Monokai]": {
+      "sideBar.background": "#347890",
+      "activityBar.background": "#380202"
+    },
+    "activityBar.activeBackground": "#1c5adfd0",
+    "activityBar.background": "#1c5adfd0",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#1cc619",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#1c5adfd0",
+    "statusBar.background": "#1c5adfd0",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#1c5adfd0",
+    "statusBarItem.remoteBackground": "#1c5adfd0",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#1c5adfd0",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#b2161999",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "glassit.alpha": 0.85,
+  "glassit.blur": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll": "explicit"
+  },
+
+  "css.lint.unknownAtRules": "ignore",
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
+  "tailwindCSS.classAttributes": ["class", "className", ".*Classes.*"]
+}
