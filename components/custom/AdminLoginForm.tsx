@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { getSession, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import { Label } from "../ui/label";
@@ -10,6 +10,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Alert, AlertDescription } from "../ui/alert";
 import { routes } from "@/config/routes";
+import { ToastMessage } from "./ToastMessage";
 // import { ROLE_REDIRECTS, Role } from "@/config/roleConfig";
 
 export function AdminLoginForm() {
@@ -24,41 +25,40 @@ export function AdminLoginForm() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+    const loadingId = ToastMessage.loading("Signing in...");
 
     try {
-      // Step 1: call NextAuth signIn (hits your authorize() in auth.ts)
       const res = await signIn("admin-login", {
         email,
         password,
-        redirect: false, // we handle redirect manually
+        redirect: false,
       });
-      console.log("response", res);
 
-      // Step 2: handle auth errors
       if (res?.error) {
-        setError(
+        // res.error now carries the real backend message
+        const message =
           res.error === "CredentialsSignin"
-            ? "Invalid email or password"
-            : res.error, // shows real backend message
-        );
+            ? "Invalid email or password" // fallback if message not thrown
+            : res.error; //  real API error e.g. "Account is suspended"
+
+        setError(message);
+        ToastMessage.error({ title: message }, { id: loadingId });
         return;
       }
 
-      // Step 3: fetch fresh session to get role
+      ToastMessage.success(
+        { title: "Admin Login Successfully!" },
+        { id: loadingId },
+      );
+
       const sessionRes = await fetch("/api/auth/session");
       const session = await sessionRes.json();
-      console.log("session admin", session);
 
       router.push(routes.privateRoutes.admin.dashboard);
-      // Step 4: redirect to role-specific dashboard
-      //   if (role && ROLE_REDIRECTS[role]) {
-      //     router.push(ROLE_REDIRECTS[role]);
-      //     router.refresh();           // ensure layout re-renders with session
-      //   } else {
-      //     setError("Unrecognized role. Please contact support.");
-      //   }
     } catch {
-      setError("Something went wrong. Please try again.");
+      const message = "Something went wrong. Please try again.";
+      setError(message);
+      ToastMessage.error({ title: message }, { id: loadingId });
     } finally {
       setIsLoading(false);
     }
@@ -125,13 +125,6 @@ export function AdminLoginForm() {
               </Button>
             </div>
           </div>
-
-          {/* Error */}
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
 
           {/* Submit */}
           <Button

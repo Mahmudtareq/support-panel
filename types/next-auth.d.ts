@@ -8,6 +8,7 @@ declare module "next-auth" {
     role: string;
     createdAt: string;
     updatedAt: string;
+    accessToken?: string | null;
   }
 
   interface Session {
@@ -18,6 +19,7 @@ declare module "next-auth" {
       role: string;
       createdAt: string;
       updatedAt: string;
+      accessToken?: string | null;
     } & DefaultSession["user"];
   }
 }

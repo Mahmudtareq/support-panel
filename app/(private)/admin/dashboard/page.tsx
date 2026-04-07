@@ -18,7 +18,7 @@ export default function Page() {
     <div>
       <h1> Welcome {session.user?.name}</h1>
       <h1> Email: {session.user?.email}</h1>
-      <h1> Email: {session.user?.role}</h1>
+      <h1> Role: {session.user?.role}</h1>
 
       <button onClick={handleLogout}>Logout</button>
     </div>

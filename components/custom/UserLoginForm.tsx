@@ -10,6 +10,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Alert, AlertDescription } from "../ui/alert";
 import { ToastMessage } from "./ToastMessage";
+import { routes } from "@/config/routes";
 // import { ROLE_REDIRECTS, Role } from "@/config/roleConfig";
 
 export function UserLoginForm() {
@@ -24,44 +25,39 @@ export function UserLoginForm() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+    const loadingId = ToastMessage.loading("Signing in...");
 
     try {
-      // Step 1: call NextAuth signIn (hits your authorize() in auth.ts)
       const res = await signIn("user-login", {
         email,
         password,
-        redirect: false, // we handle redirect manually
+        redirect: false,
       });
-      console.log("response", res);
 
-      // Step 2: handle auth errors
       if (res?.error) {
-        setError(
+        const message =
           res.error === "CredentialsSignin"
             ? "Invalid email or password"
-            : res.error, // shows real backend message
-        );
+            : "Invalid email or password";
+
+        setError(message);
+        ToastMessage.error({ title: message }, { id: loadingId });
         return;
       }
-      ToastMessage.success({ title: "Login Successfully!" });
-      // Step 3: fetch fresh session to get role
+
+      ToastMessage.success(
+        { title: "User Login Successfully!" },
+        { id: loadingId },
+      );
+
       const sessionRes = await fetch("/api/auth/session");
       const session = await sessionRes.json();
-      console.log("sessionRes", session);
 
-      // session.user shape: { id, name, email, role, createdAt, updatedAt }
-      //   const role = session?.user?.role as Role | undefined;
-
-      router.push("/user/dashboard");
-      // Step 4: redirect to role-specific dashboard
-      //   if (role && ROLE_REDIRECTS[role]) {
-      //     router.push(ROLE_REDIRECTS[role]);
-      //     router.refresh();           // ensure layout re-renders with session
-      //   } else {
-      //     setError("Unrecognized role. Please contact support.");
-      //   }
+      router.push(routes.privateRoutes.user.dashboard);
     } catch {
-      setError("Something went wrong. Please try again.");
+      const message = "Something went wrong. Please try again.";
+      setError(message);
+      ToastMessage.error({ title: message }, { id: loadingId });
     } finally {
       setIsLoading(false);
     }

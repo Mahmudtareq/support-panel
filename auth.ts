@@ -27,7 +27,20 @@ const buildAuthorize =
       });
 
       const json = await res.json();
-      if (!res.ok || json?.status !== "success" || !json?.data) return null;
+
+      console.log("API Response:", json);
+
+      if (!res.ok || json?.status !== "success" || !json?.data) {
+        throw new Error(
+          json?.message ?? json?.error ?? "Invalid email or password",
+        );
+      }
+
+      // ✅ Extract accessToken from response header
+      const accessToken =
+        res.headers.get("x-auth-token") ??
+        res.headers.get("X-Auth-Token") ??
+        null;
 
       const user = json.data;
       return {
@@ -35,12 +48,12 @@ const buildAuthorize =
         name: user.name,
         email: user.email,
         role: user.role,
+        accessToken, // ✅ backend JWT from header
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       };
     } catch (error) {
-      console.error("AUTH ERROR:", error);
-      return null;
+      throw error;
     }
   };
 
@@ -70,6 +83,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.accessToken = user.accessToken; // ✅ store in JWT
         token.createdAt = user.createdAt;
         token.updatedAt = user.updatedAt;
       }
@@ -78,23 +92,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id!;
-        session.user.role = token.role!;
-        session.user.createdAt = token.createdAt!;
-        session.user.updatedAt = token.updatedAt!;
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+        session.user.accessToken = token.accessToken as string; // ✅ on user object
+        session.user.createdAt = token.createdAt as string;
+        session.user.updatedAt = token.updatedAt as string;
       }
       return session;
     },
 
-    // allow callbackUrls through, only catch NextAuth's own error redirects
     async redirect({ url, baseUrl }) {
-      // Allow relative URLs (e.g. /user/dashboard, /admin/dashboard)
       if (url.startsWith("/")) return `${baseUrl}${url}`;
-
-      // Allow same-origin absolute URLs
       if (url.startsWith(baseUrl)) return url;
-
-      // Fallback — should rarely hit this
       return `${baseUrl}/login`;
     },
   },
